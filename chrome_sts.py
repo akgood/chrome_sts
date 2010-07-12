@@ -1,6 +1,27 @@
 """
 Google Chrome 'Strict Transport Security' Config Editor
 
+Example Usage:
+
+check to see if www.facebook.com (or facebook.com, with the
+'include_subdomains' flag) has an STS policy set:
+
+    $ python chrome_sts.py -g www.facebook.com
+
+enable an STS policy for www.facebook.com:
+
+    $ python chrome_sts.py -s www.facebook.com
+
+enable an STS policy for eff.org and all subdomains of eff.org:
+
+    $ python chrome_sts.py -s --include-subdomains eff.org
+
+remove STS policy for www.google.com (note: this will *only* remove a
+policy for 'www.google.com', not 'google.com' even if the policy for
+'google.com' has the 'include_subdomains' flag enabled):
+
+    $ python chrome_sts.py -r www.google.com
+
 Background:
 
 Strict Transport Security is a proposed mechanism by which websites
@@ -117,40 +138,36 @@ if __name__ == '__main__':
     parser.add_option('-p', '--profile-dir', dest='profile_dir')
     parser.add_option('-s', '--set', action='store_true', dest='set')
     parser.add_option('-g', '--get', action='store_true', dest='get')
+    parser.add_option('-r', '--remove', action='store_true', dest='remove')
     parser.add_option('--include-subdomains', action='store_true', dest='include_subdomains')
-
     (options, args) = parser.parse_args()
 
     # validate
     if len(args) != 1:
         parser.print_usage()
         sys.exit(-1)
-    if options.set and options.get:
-        print '-s and -g are mutually exclusive!'
+    if (int(bool(options.set)) + int(bool(options.get)) + int(bool(options.remove))) > 1:
+        print '-s, -g, and -r are mutually exclusive!'
+        sys.exit(-1)
 
     # locate TransportSecurity config file
     profile_dir = options.profile_dir
     if not profile_dir:
         profile_dir = get_profile_path()
     if not profile_dir:
-        print 'My crude, hackish pathfinding routine was unable to locate your Google Chrome profile.'
+        print 'My crude, hackish locator routine was unable to locate your Google Chrome profile.'
         print 'Please pass it manually using the \'-p\' option.'
         sys.exit(-1)
     sts_filename = os.path.join(profile_dir, 'TransportSecurity')
 
+    # read STS configuration
     sts_dict = {}
     if os.path.exists(sts_filename):
         with open(sts_filename, 'r') as sts_fp:
             sts_dict = json.load(sts_fp)
 
-    if not options.set:
-        site_name, config = get_site_conf(sts_dict, args[0])
-        print '%s:' % site_name
-        if config:
-            print json.dumps(config, indent=4)
-        else:
-            print 'No configuration exists for that site'
-    else:
+    # perform requested action
+    if options.set:
         site_conf = {
             'expiry': float(0x7FFFFFFF), # far in the future
             'created': time.time(),
@@ -160,3 +177,17 @@ if __name__ == '__main__':
         sts_dict[sts_key(args[0])] = site_conf
         with open(sts_filename, 'w') as sts_fp:
             json.dump(sts_dict, sts_fp)
+    elif options.remove:
+        key = sts_key(args[0])
+        if key in sts_dict:
+            del sts_dict[key]
+            with open(sts_filename, 'w') as sts_fp:
+                json.dump(sts_dict, sts_fp)
+    else:
+        site_name, config = get_site_conf(sts_dict, args[0])
+        print '%s:' % site_name
+        if config:
+            print json.dumps(config, indent=4)
+        else:
+            print 'No configuration exists for that site'
+
