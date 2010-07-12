@@ -48,19 +48,20 @@ There are two major problems with this approach:
     Google proposes to remedy this in part by distributing a
     pre-installed list of STS domains. Currently, this list is
     hardcoded and only includes ~3 such domains, two of which are
-    PayPal.
+    PayPal. This is a start, but not much of one...
 
 (2) It requires the cooperation of site operators. Some sites
     (e.g. Facebook), while offering a secure option, would most likely
     prefer more users continue using the less secure (HTTP) option, as
     SSL places a significant additional burden on server resources.
 
-    policies as well. The EFF recently released a Firefox extension                                                                                                                             
-    ("HTTPS Everywhere") which intends to do just that (as well as                                                                                                                              
-    grafting Strict-Transport-Security support onto firefox, which                                                                                                                              
-    doesn't support it yet). However, there doesn't really appear to                                                                                                                            
-    be a good option for Chrome yet. This is a crude attempt at                                                                                                                                 
-    starting to fix that...                                                                                                                                                                     
+So, there needs to be an option by which users can set "SSL-only"                                                                                                                               
+policies as well. The EFF recently released a Firefox extension                                                                                                                                 
+("HTTPS Everywhere") which does just that (as well as grafting                                                                                                                                  
+Strict-Transport-Security support onto Firefox, which doesn't support                                                                                                                           
+it natively yet). However, there doesn't really appear to be a good                                                                                                                             
+option for Chrome yet. This is a crude attempt at starting to fix                                                                                                                               
+that...                                                                                                                                                                                                                                                                                                                                                                              
 
 When Google Chrome receives a 'Strict-Transport-Security' header, it
 stores the configuration in a JSON file 'TransportSecurity' in its
