@@ -48,25 +48,32 @@ There are two major problems with this approach:
     Google proposes to remedy this in part by distributing a
     pre-installed list of STS domains. Currently, this list is
     hardcoded and only includes ~3 such domains, two of which are
-    PayPal.
+    PayPal. This is a start, but not much of one...
 
 (2) It requires the cooperation of site operators. Some sites
     (e.g. Facebook), while offering a secure option, would most likely
     prefer more users continue using the less secure (HTTP) option, as
     SSL places a significant additional burden on server resources.
 
-    So, there needs to be an option by which users can set "SSL-only"
-    policies as well. The EFF recently released a Firefox extension
-    ("HTTPS Everywhere") which intends to do just that.
+So, there needs to be an option by which users can set "SSL-only"                                                                                                                               
+policies as well. The EFF recently released a Firefox extension                                                                                                                                 
+("HTTPS Everywhere") which does just that (as well as grafting                                                                                                                                  
+Strict-Transport-Security support onto Firefox, which doesn't support                                                                                                                           
+it natively yet). However, there doesn't really appear to be a good                                                                                                                             
+option for Chrome yet. This is a crude attempt at starting to fix                                                                                                                               
+that...                                                                                                                                                                                                                                                                                                                                                                              
 
 When Google Chrome receives a 'Strict-Transport-Security' header, it
 stores the configuration in a JSON file 'TransportSecurity' in its
 user profile directory. Sites are indexed by SHA-256 hashes, so it
 is impossible to enumerate all sites for which STS settings exist.
 
-However, we can add or viewe configurations for specific sites
-(though, note that any sites which provide STS headers will probably
-override any custom settings). This simple utility does just that.
+However, we can add or view configurations for specific sites                                                                                                                                   
+(though, note that any sites which provide STS headers will probably                                                                                                                            
+override any custom settings). This simple utility does just that.                                                                                                                              
+                                                                                                                                                                                                
+This script has only been tested so far with Google Chrome 5.0.375.99                                                                                                                           
+on Mac OS X. (and not very thoroughly, at that)                                                                                                                                                 
 
 TODO:
 * friendlier output
