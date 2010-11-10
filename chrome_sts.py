@@ -176,7 +176,7 @@ if __name__ == '__main__':
     # perform requested action
     if options.set:
         site_conf = {
-            'expiry': 1292038031.6046779, #float(0x7FFFFFFF), # far in the future
+            'expiry': float(0x7FFFFFFF), # far in the future
             'created': time.time(),
             'mode': 'strict',
             'include_subdomains': bool(options.include_subdomains)
