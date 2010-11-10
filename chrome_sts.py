@@ -92,7 +92,7 @@ def sts_key(name):
     TransportSecurity JSON dictionary. The key is a base64-encoded
     SHA-256 digest of the "DNS Form" of the domain name"""
 
-    digest = hashlib.sha256(dns_form(name)).digest()
+    digest = hashlib.sha256(dns_form(name) + '\0').digest()
     return base64.b64encode(digest)
 
 def get_profile_path():
@@ -103,7 +103,7 @@ def get_profile_path():
     path = None
 
     if platform.system() == 'Darwin':
-        path = os.path.expanduser('/Users/akgood/Library/Application Support/Google/Chrome/Default')
+        path = os.path.expanduser('~/Library/Application Support/Google/Chrome/Default')
     elif platform.system() == 'Windows':
         # XXX Will apparently only work on Vista+.
         # better (maybe?) would be to use ctypes to call into shell32.dll
@@ -169,20 +169,20 @@ if __name__ == '__main__':
     # perform requested action
     if options.set:
         site_conf = {
-            'expiry': float(0x7FFFFFFF), # far in the future
+            'expiry': 1292038031.6046779, #float(0x7FFFFFFF), # far in the future
             'created': time.time(),
             'mode': 'strict',
             'include_subdomains': bool(options.include_subdomains)
             }
         sts_dict[sts_key(args[0])] = site_conf
         with open(sts_filename, 'w') as sts_fp:
-            json.dump(sts_dict, sts_fp)
+            json.dump(sts_dict, sts_fp, indent=4)
     elif options.remove:
         key = sts_key(args[0])
         if key in sts_dict:
             del sts_dict[key]
             with open(sts_filename, 'w') as sts_fp:
-                json.dump(sts_dict, sts_fp)
+                json.dump(sts_dict, sts_fp, indent=4)
     else:
         site_name, config = get_site_conf(sts_dict, args[0])
         print '%s:' % site_name
