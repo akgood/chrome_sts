@@ -172,6 +172,10 @@ if __name__ == '__main__':
     if os.path.exists(sts_filename):
         with open(sts_filename, 'r') as sts_fp:
             sts_dict = json.load(sts_fp)
+    elif options.get:
+        print 'There does not appear to be a TransportSecurity file in your profile directory.'
+        sys.exit(-1)
+
 
     # perform requested action
     if options.set:
